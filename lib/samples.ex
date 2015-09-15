@@ -1,5 +1,12 @@
 defmodule Samples do
 
+  def extract(contents, type) do
+    contents
+    |> extract_table_parts
+    |> (fn {vars, _type, keyword_lists} -> {vars, type, keyword_lists} end).()
+    |> process_table_parts
+  end
+
   def extract(contents) do
     contents
     |> extract_table_parts

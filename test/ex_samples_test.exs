@@ -3,70 +3,99 @@ defmodule ExSamplesTest do
   use ExSamples  
 
   defmodule User do
-    defstruct name: nil, country: nil, city: nil, age: nil
+    defstruct name: nil, country: nil, city: nil
   end
 
-  test "initializing structs" do
+  test "initializing a list of maps (default)" do
 
-    result = samples do
-      User  | :name       | :country        | :city           | :age
-      user1 | "Christian" | "United States" | "New York City" | 27
-      user2 | "Peter"     | "Austria"       | "Vienna"        | 32
+    users = samples do
+      :name       | :country        | :city          
+      "Christian" | "United States" | "New York City"
+      "Peter"     | "Austria"       | "Vienna"       
     end
 
-    assert user1  == %User{name: "Christian", country: "United States", city: "New York City", age: 27}
-    assert user2  == %User{name: "Peter", country: "Austria", city: "Vienna", age: 32}
-    assert result == [user1, user2]
+    assert users == [
+      %{name: "Christian", country: "United States", city: "New York City"},
+      %{name: "Peter", country: "Austria", city: "Vienna"}
+    ]
     
   end
 
-  test "initializing keyword lists" do
-    result = samples do
-      []    | :name       | :country        | :city           | :age
-      user1 | "Christian" | "United States" | "New York City" | 27
-      user2 | "Peter"     | "Austria"       | "Vienna"        | 32
+  test "initializing a list of structs" do
+
+    users = samples as: User do
+      :name       | :country        | :city
+      "Christian" | "United States" | "New York City"
+      "Peter"     | "Austria"       | "Vienna"
     end
 
-    assert user1 == [name: "Christian", country: "United States", city: "New York City", age: 27]
-    assert user2 == [name: "Peter", country: "Austria", city: "Vienna", age: 32]
-    assert result == [user1, user2]
+    assert users == [
+      %User{name: "Christian", country: "United States", city: "New York City"},
+      %User{name: "Peter", country: "Austria", city: "Vienna"}
+    ]
 
   end
 
-  test "initializing maps" do
-
-    result = samples do
-      %{}   | :name       | :country        | :city           | :age
-      user1 | "Christian" | "United States" | "New York City" | 27
-      user2 | "Peter"     | "Austria"       | "Vienna"        | 32
+  test "initializing list of keyword lists" do
+    users = samples as: [] do
+      :name       | :country        | :city          
+      "Christian" | "United States" | "New York City"
+      "Peter"     | "Austria"       | "Vienna"       
     end
 
-    assert user1 == %{name: "Christian", country: "United States", city: "New York City", age: 27}
-    assert user2 == %{name: "Peter", country: "Austria", city: "Vienna", age: 32}
+    assert users == [
+      [name: "Christian", country: "United States", city: "New York City"],
+      [name: "Peter", country: "Austria", city: "Vienna"]
+    ]
 
   end
 
-  test "without initializing variables" do
-      users = samples do
-        :name       | :country        | :city           | :age
-        "Christian" | "United States" | "New York City" | 27
-        "Peter"     | "Austria"       | "Vienna"        | 32
-      end
+  test "initializing variables in the first column as maps" do
 
-      assert users == [
-        %{name: "Christian", country: "United States", city: "New York City", age: 27},
-        %{name: "Peter", country: "Austria", city: "Vienna", age: 32}
-      ]
+    samples do
+      %{}   | :name       | :country        | :city          
+      user1 | "Christian" | "United States" | "New York City"
+      user2 | "Peter"     | "Austria"       | "Vienna"       
+    end
+
+    assert user1 == %{name: "Christian", country: "United States", city: "New York City"}
+    assert user2 == %{name: "Peter", country: "Austria", city: "Vienna"}
+
+  end
+
+  test "initializing variables in the first column as structs" do
+
+    samples do
+      User  | :name       | :country        | :city          
+      user1 | "Christian" | "United States" | "New York City"
+      user2 | "Peter"     | "Austria"       | "Vienna"       
+    end
+
+    assert user1 == %User{name: "Christian", country: "United States", city: "New York City"}
+    assert user2 == %User{name: "Peter", country: "Austria", city: "Vienna"}
+    
+  end
+
+  test "initializing variables in the first column as keyword lists" do
+    samples do
+      []    | :name       | :country        | :city          
+      user1 | "Christian" | "United States" | "New York City"
+      user2 | "Peter"     | "Austria"       | "Vienna"       
+    end
+
+    assert user1 == [name: "Christian", country: "United States", city: "New York City"]
+    assert user2 == [name: "Peter", country: "Austria", city: "Vienna"]
+
   end
 
   test "table with single line" do
 
     users = samples do
-      User  | :name       | :country        | :city           | :age
-      user1 | "Christian" | "United States" | "New York City" | 27
+      User  | :name       | :country        | :city          
+      user1 | "Christian" | "United States" | "New York City"
     end
 
-    assert user1 == %User{name: "Christian", country: "United States", city: "New York City", age: 27}
+    assert user1 == %User{name: "Christian", country: "United States", city: "New York City"}
     assert users == [user1]
 
   end
@@ -74,7 +103,16 @@ defmodule ExSamplesTest do
   test "table without body" do
 
     users = samples do
-      User | :name | :country | :city | :age
+      User | :name | :country | :city
+    end
+
+    assert users == []
+
+  end
+
+  test "empty table" do
+
+    users = samples do
     end
 
     assert users == []
@@ -84,14 +122,13 @@ defmodule ExSamplesTest do
   test "with variables" do
 
     country = "United States"
-    age     = 27
     
     samples do
-      User  | :name       | :country | :city           | :age
-      user1 | "Christian" | country  | "New York City" | age
+      User  | :name       | :country | :city          
+      user1 | "Christian" | country  | "New York City"
     end
 
-    assert user1 == %User{name: "Christian", country: "United States", city: "New York City", age: 27}
+    assert user1 == %User{name: "Christian", country: "United States", city: "New York City"}
 
   end
 
@@ -102,11 +139,11 @@ defmodule ExSamplesTest do
   test "with functions" do
     
     samples do
-      User  | :name       | :country | :city           | :age
-      user1 | "Christian" | country  | "New York City" | 27
+      User  | :name       | :country | :city          
+      user1 | "Christian" | country  | "New York City"
     end
 
-    assert user1 == %User{name: "Christian", country: "United States", city: "New York City", age: 27}
+    assert user1 == %User{name: "Christian", country: "United States", city: "New York City"}
 
   end
 
@@ -115,11 +152,11 @@ defmodule ExSamplesTest do
   test "with module attributes" do
     
     samples do
-      User  | :name       | :country | :city           | :age
-      user1 | "Christian" | @country | "New York City" | 27
+      User  | :name       | :country | :city          
+      user1 | "Christian" | @country | "New York City"
     end
 
-    assert user1 == %User{name: "Christian", country: "United States", city: "New York City", age: 27}
+    assert user1 == %User{name: "Christian", country: "United States", city: "New York City"}
 
   end
 
@@ -141,13 +178,13 @@ defmodule ExSamplesTest do
   test "with diferent compound data types" do
     
     samples do
-      %{}   | :list   | :tuple           | :struct                     | :map
-      types | [1,2,3] | {2, "foo" ,:bar} | %User{name: "Joe", age: 35} | %{foo: "bar"}
+      %{}   | :list   | :tuple           | :struct                            | :map
+      types | [1,2,3] | {2, "foo" ,:bar} | %User{name: "Joe", city: "London"} | %{foo: "bar"}
     end
 
     assert types.list   == [1,2,3]
     assert types.tuple  == {2, "foo" ,:bar}
-    assert types.struct == %User{name: "Joe", age: 35, country: nil, city: nil}
+    assert types.struct == %User{name: "Joe", city: "London", country: nil}
     assert types.map    == %{foo: "bar"}
     
   end
