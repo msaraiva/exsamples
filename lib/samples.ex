@@ -1,13 +1,9 @@
 defmodule Samples do
 
-  def do_vars(contents) do
-    {vars, type, keyword_lists} = extract_table_parts(contents)
-    to_assignments(vars, type, keyword_lists)
-  end
-
-  def do_list_of(contents) do
-    {_vars, type, keyword_lists} = extract_table_parts(contents)
-    to_typed_list(keyword_lists, type)
+  def extract(contents) do
+    contents
+    |> extract_table_parts
+    |> process_table_parts
   end
 
   defp extract_table_parts(contents) do
@@ -19,6 +15,14 @@ defmodule Samples do
     
     keyword_lists = zip_fields_and_values(fields, fields_values)
     {vars, type, keyword_lists}    
+  end
+
+  defp process_table_parts({[], type, keyword_lists}) do
+    to_typed_list(keyword_lists, type)
+  end
+  
+  defp process_table_parts({vars, type, keyword_lists}) do
+    to_assignments(vars, type, keyword_lists)
   end
 
   defp slice_table(table) do

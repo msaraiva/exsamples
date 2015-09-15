@@ -8,7 +8,7 @@ defmodule ExSamplesTest do
 
   test "initializing structs" do
 
-    result = vars do
+    result = samples do
       User  | :name       | :country        | :city           | :age
       user1 | "Christian" | "United States" | "New York City" | 27
       user2 | "Peter"     | "Austria"       | "Vienna"        | 32
@@ -21,7 +21,7 @@ defmodule ExSamplesTest do
   end
 
   test "initializing keyword lists" do
-    result = vars do
+    result = samples do
       []    | :name       | :country        | :city           | :age
       user1 | "Christian" | "United States" | "New York City" | 27
       user2 | "Peter"     | "Austria"       | "Vienna"        | 32
@@ -29,13 +29,13 @@ defmodule ExSamplesTest do
 
     assert user1 == [name: "Christian", country: "United States", city: "New York City", age: 27]
     assert user2 == [name: "Peter", country: "Austria", city: "Vienna", age: 32]
-    assert result == [user1, user2]    
+    assert result == [user1, user2]
 
   end
 
   test "initializing maps" do
 
-    vars do
+    result = samples do
       %{}   | :name       | :country        | :city           | :age
       user1 | "Christian" | "United States" | "New York City" | 27
       user2 | "Peter"     | "Austria"       | "Vienna"        | 32
@@ -47,7 +47,7 @@ defmodule ExSamplesTest do
   end
 
   test "without initializing variables" do
-      users = list_of do
+      users = samples do
         :name       | :country        | :city           | :age
         "Christian" | "United States" | "New York City" | 27
         "Peter"     | "Austria"       | "Vienna"        | 32
@@ -61,7 +61,7 @@ defmodule ExSamplesTest do
 
   test "table with single line" do
 
-    users = vars do
+    users = samples do
       User  | :name       | :country        | :city           | :age
       user1 | "Christian" | "United States" | "New York City" | 27
     end
@@ -73,7 +73,7 @@ defmodule ExSamplesTest do
 
   test "table without body" do
 
-    users = list_of do
+    users = samples do
       User | :name | :country | :city | :age
     end
 
@@ -86,7 +86,7 @@ defmodule ExSamplesTest do
     country = "United States"
     age     = 27
     
-    vars do
+    samples do
       User  | :name       | :country | :city           | :age
       user1 | "Christian" | country  | "New York City" | age
     end
@@ -101,7 +101,7 @@ defmodule ExSamplesTest do
 
   test "with functions" do
     
-    vars do
+    samples do
       User  | :name       | :country | :city           | :age
       user1 | "Christian" | country  | "New York City" | 27
     end
@@ -114,7 +114,7 @@ defmodule ExSamplesTest do
 
   test "with module attributes" do
     
-    vars do
+    samples do
       User  | :name       | :country | :city           | :age
       user1 | "Christian" | @country | "New York City" | 27
     end
@@ -125,7 +125,7 @@ defmodule ExSamplesTest do
 
   test "with diferent types" do
     
-    vars do
+    samples do
       %{}   | :string       | :integer | :float | :atom | :boolean 
       types | "some string" |       42 |  14.33 | :foo  |   true    
     end
@@ -140,7 +140,7 @@ defmodule ExSamplesTest do
 
   test "with diferent compound data types" do
     
-    vars do
+    samples do
       %{}   | :list   | :tuple           | :struct                     | :map
       types | [1,2,3] | {2, "foo" ,:bar} | %User{name: "Joe", age: 35} | %{foo: "bar"}
     end

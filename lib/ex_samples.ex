@@ -6,12 +6,8 @@ defmodule ExSamples do
     end
   end
 
-  defmacro vars(contents) do
-    contents |> Samples.do_vars
-  end
-
-  defmacro list_of(contents) do
-    contents |> Samples.do_list_of
+  defmacro samples(contents) do
+    contents |> Samples.extract
   end
   
 end
