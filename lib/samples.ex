@@ -59,7 +59,15 @@ defmodule Samples do
       replace_value(type, item)
     end
   end  
-  
+
+  def extract_type_and_fields([type = {atom, _, []}|fields]) when atom == :%{} do
+    {type, fields}
+  end
+
+  def extract_type_and_fields(fields = [{field, [line: _line], _}|_]) when is_atom(field) do
+    {nil, Enum.map(fields, fn {field, [line: _line], _} -> field end)}
+  end
+
   def extract_type_and_fields(fields = [field|_]) when is_atom(field) do
     {nil, fields}
   end
