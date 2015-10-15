@@ -65,8 +65,8 @@ defmodule Samples do
     {type, fields}
   end
 
-  def extract_type_and_fields(fields = [{field, [line: line], _}|_]) when is_atom(field) do
-    {nil, Enum.map(fields, fn {field, [line: line], _} -> field end)}
+  def extract_type_and_fields(fields = [{field, [_], _}|_]) when is_atom(field) do
+    {nil, Enum.map(fields, fn {field, [_], _} -> field end)}
   end
 
   def extract_type_and_fields(fields = [field|_]) when is_atom(field) do
