@@ -1,8 +1,8 @@
 # ExSamples
 
-Initializes lists and/or variables using tabular data written in Elixir.
+Initializes lists and/or variables using tabular data in Elixir.
 
-ExSamples helps you to describe data with same type in a more **compact** and **readable** way. Specially useful when defining sample data (e.g. for tests). Here is an example:
+ExSamples helps you to describe data of the same type in a more **compact** and **readable** way. Specially useful when defining sample data (e.g. for tests). Here is an example:
 
 ```Elixir
 countries = samples do
@@ -28,7 +28,7 @@ Add ExSamples as a dependency in your `mix.exs` file.
 
 ```elixir
 def deps do
-  [ { :ex_samples, "~> 0.0.1" } ]
+  [ { :exsamples, "~> 0.1.0" } ]
 end
 ```
 

@@ -3,8 +3,10 @@ defmodule ExSamples.Mixfile do
 
   def project do
     [app: :exsamples,
-     version: "0.0.1",
-     elixir: "~> 1.1.0",
+     version: "0.1.0",
+     elixir: "~> 1.1",
+     description: description,
+     package: package,
      deps: deps]
   end
 
@@ -14,5 +16,18 @@ defmodule ExSamples.Mixfile do
 
   defp deps do
     []
+  end
+
+  defp description do
+    """
+    Initializes lists and/or variables using tabular data in Elixir.
+    """
+  end
+
+  defp package do
+    [files: ["lib", "priv", "mix.exs", "README.md", "LICENSE"],
+     maintainers: ["Marlus Saraiva"],
+     licenses: ["MIT"],
+     links: %{"GitHub" => "https://github.com/msaraiva/exsamples"}]
   end
 end
