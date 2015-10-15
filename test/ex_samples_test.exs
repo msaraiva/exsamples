@@ -1,6 +1,6 @@
 defmodule ExSamplesTest do
   use ExUnit.Case
-  use ExSamples  
+  import ExSamples
 
   defmodule User do
     defstruct name: nil, country: nil, city: nil
@@ -205,4 +205,3 @@ defmodule ExSamplesTest do
   end
 
 end
-
