@@ -1,6 +1,6 @@
 # ExSamples
 
-Initializes lists and/or variables using tabular data in Elixir.
+Initializes lists of maps, structs or keyword lists using tabular data in Elixir.
 
 ExSamples helps you to describe data of the same type in a more **compact** and **readable** way. Specially useful when defining sample data (e.g. for tests). Here is an example:
 

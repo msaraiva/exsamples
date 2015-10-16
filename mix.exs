@@ -20,7 +20,7 @@ defmodule ExSamples.Mixfile do
 
   defp description do
     """
-    Initializes lists and/or variables using tabular data in Elixir.
+    Initializes lists of maps, structs or keyword lists using tabular data in Elixir.
     """
   end
 
