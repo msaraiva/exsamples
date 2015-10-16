@@ -25,7 +25,7 @@ defmodule ExSamples.Mixfile do
   end
 
   defp package do
-    [files: ["lib", "priv", "mix.exs", "README.md", "LICENSE"],
+    [files: ["lib", "mix.exs", "README.md", "LICENSE"],
      maintainers: ["Marlus Saraiva"],
      licenses: ["MIT"],
      links: %{"GitHub" => "https://github.com/msaraiva/exsamples"}]
