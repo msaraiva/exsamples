@@ -43,12 +43,12 @@ defmodule Samples do
   defp to_assignments(vars, type, keyword_lists) do
     vars
     |> Enum.zip(keyword_lists)
-    |> Enum.map fn {var_name, value} ->
+    |> Enum.map(fn {var_name, value} ->
       var = Macro.var(var_name, nil)
       quote do
         unquote(var) = unquote(replace_value(type, value))
       end
-    end
+    end)
   end
 
   defp to_typed_list(contents, nil) do
@@ -122,7 +122,7 @@ defmodule Samples do
   end
 
   defp extract_rows(contents) do
-    contents |> Enum.map &extract_row(&1)
+    contents |> Enum.map(&extract_row(&1))
   end
 
   defp extract_row([row]) do

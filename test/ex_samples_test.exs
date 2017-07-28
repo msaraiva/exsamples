@@ -139,8 +139,8 @@ defmodule ExSamplesTest do
   test "with functions as values" do
 
     samples do
-      User  | :name       | :country | :city
-      user1 | "Christian" | country  | "New York City"
+      User  | :name       | :country  | :city
+      user1 | "Christian" | country() | "New York City"
     end
 
     assert user1 == %User{name: "Christian", country: "United States", city: "New York City"}
