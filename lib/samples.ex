@@ -33,7 +33,7 @@ defmodule Samples do
   end
 
   defp slice_table(table) do
-    [header|rows]         = table
+    [header|rows]         = extract_header_rows(table)
     {type, fields}        = extract_type_and_fields(header)
     {vars, fields_values} = extract_vars_and_fields_values(type, rows)
 
@@ -61,7 +61,14 @@ defmodule Samples do
     end
   end
 
+  defp extract_header_rows([]), do: [[nil]]
+  defp extract_header_rows(table), do: table
+
   def extract_type_and_fields([type = {atom, _, []}|fields]) when atom == :%{} do
+    {type, fields}
+  end
+
+  def extract_type_and_fields([{:__aliases__, _, [_]} = type | fields]) do
     {type, fields}
   end
 
@@ -95,6 +102,10 @@ defmodule Samples do
 
   # As structs by module name
   defp replace_value({:__aliases__, [counter: _, line: _], [module]}, value) do
+    {:%, [], [{:__aliases__, [], [module]}, {:%{}, [], value}]}
+  end
+
+  defp replace_value({:__aliases__, [line: _], [module]}, value) do
     {:%, [], [{:__aliases__, [], [module]}, {:%{}, [], value}]}
   end
 
