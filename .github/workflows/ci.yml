@@ -6,12 +6,14 @@ jobs:
       matrix:
         # https://hexdocs.pm/elixir/compatibility-and-deprecations.html
         # https://github.com/erlef/setup-beam#compatibility-between-operating-system-and-erlangotp
-        elixir: ["1.5"]
-        otp: ["20"]
+        elixir: ["1.6"]
+        otp: ["21", "20", "19"]
         os: ["ubuntu-20.04"]
         include:
-          - { elixir: "1.5", otp: "19", os: "ubuntu-18.04" }
-          - { elixir: "1.5", otp: "18", os: "ubuntu-18.04" }
+          - { elixir: "1.6", otp: "19", os: "ubuntu-18.04" }
+          - { elixir: "1.5", otp: "20", os: "ubuntu-20.04" }
+        exclude:
+          - { otp: "19", os: "ubuntu-20.04" }
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v2
