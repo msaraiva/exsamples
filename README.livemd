@@ -1,0 +1,257 @@
+<!-- vim: syntax=markdown -->
+
+<!-- livebook:{"persist_outputs":true} -->
+
+# ExSamples Guide
+
+## Setup
+
+```elixir
+Mix.install([
+  :exsamples
+])
+```
+
+```output
+:ok
+```
+
+## Usage
+
+Initializes lists of maps, structs or keyword lists using tabular data in Elixir.
+
+ExSamples helps you to describe data of the same type in a more **compact** and **readable** way. Specially useful when defining sample data (e.g. for tests). Here is an example:
+
+<!-- livebook:{"disable_formatting":true} -->
+
+```elixir
+import ExSamples
+
+countries = samples do
+  :id | :name           | :currency                    | :language    | :population
+   1  | "Brazil"        | "Real (BRL)"                 | "Portuguese" | 204_451_000
+   2  | "United States" | "United States Dollar (USD)" | "English"    | 321_605_012
+   3  | "Austria"       | "Euro (EUR)"                 | "German"     |   8_623_073
+   4  | "Sweden"        | "Swedish krona (SEK)"        | "Swedish"    |   9_801_616
+end
+
+countries |> Enum.at(1)
+```
+
+```output
+%{
+  currency: "United States Dollar (USD)",
+  id: 2,
+  language: "English",
+  name: "United States",
+  population: 321605012
+}
+```
+
+<!-- livebook:{"disable_formatting":true} -->
+
+```elixir
+import ExSamples
+
+users =
+  samples do
+    :name       | :country        | :city           | :admin
+    "Christian" | "United States" | "New York City" | false
+    "Peter"     | "Germany"       | "Berlin"        | true
+    "José"      | "Brazil"        | "São Paulo"     | false
+    "Ingrid"    | "Austria"       | "Salzburg"      | false
+    "Lucas"     | "Brazil"        | "Fortaleza"     | true 
+  end
+```
+
+```output
+[
+  %{admin: false, city: "New York City", country: "United States", name: "Christian"},
+  %{admin: true, city: "Berlin", country: "Germany", name: "Peter"},
+  %{admin: false, city: "São Paulo", country: "Brazil", name: "José"},
+  %{admin: false, city: "Salzburg", country: "Austria", name: "Ingrid"},
+  %{admin: true, city: "Fortaleza", country: "Brazil", name: "Lucas"}
+]
+```
+
+As you can see, after macro expansion you get a regular list.
+
+You can use `for` comprehensions for mapping and filtering your data just like with any other Enumerable.
+
+```elixir
+for %{name: name, country: country, city: city} <- users, country == "Brazil" do
+  {name, city}
+end
+```
+
+```output
+[{"José", "São Paulo"}, {"Lucas", "Fortaleza"}]
+```
+
+## Data Types
+
+By default `samples` initializes a list of maps. But you can also define structs and keyword lists.
+
+### Initializing structs
+
+<!-- livebook:{"disable_formatting":true} -->
+
+```elixir
+import ExSamples
+
+defmodule Country do
+  defstruct [:id, :name, :currency, :language, :population]
+end
+```
+
+```output
+{:module, Country, <<70, 79, 82, 49, 0, 0, 7, ...>>,
+ %Country{currency: nil, id: nil, language: nil, name: nil, population: nil}}
+```
+
+```elixir
+samples as: Country do
+  :id | :name | :currency | :language | :population
+  1 | "Brazil" | "Real (BRL)" | "Portuguese" | 204_451_000
+  2 | "United States" | "United States Dollar (USD)" | "English" | 321_605_012
+end
+```
+
+```output
+[
+  %Country{
+    currency: "Real (BRL)",
+    id: 1,
+    language: "Portuguese",
+    name: "Brazil",
+    population: 204451000
+  },
+  %Country{
+    currency: "United States Dollar (USD)",
+    id: 2,
+    language: "English",
+    name: "United States",
+    population: 321605012
+  }
+]
+```
+
+### Initializing keyword lists
+
+<!-- livebook:{"disable_formatting":true} -->
+
+```elixir
+import ExSamples
+
+samples as: [] do
+  :id | :name           | :currency             | :language    | :population
+   3  | "Austria"       | "Euro (EUR)"          | "German"     |   8_623_073        
+   4  | "Sweden"        | "Swedish krona (SEK)" | "Swedish"    |   9_801_616
+end
+```
+
+```output
+[
+  [id: 3, name: "Austria", currency: "Euro (EUR)", language: "German", population: 8623073],
+  [id: 4, name: "Sweden", currency: "Swedish krona (SEK)", language: "Swedish", population: 9801616]
+]
+```
+
+### Assigning variables as structs
+
+<!-- livebook:{"disable_formatting":true} -->
+
+```elixir
+import ExSamples
+
+defmodule Country do
+  defstruct [:name, :currency, :language]
+end
+
+defmodule User do
+  defstruct [:id, :name, :country, :admin, :last_login]
+end
+```
+
+```output
+{:module, User, <<70, 79, 82, 49, 0, 0, 7, ...>>,
+ %User{admin: nil, country: nil, id: nil, last_login: nil, name: nil}}
+```
+
+```elixir
+samples do
+  Country | :name | :currency | :language
+  country1 | "Brazil" | "Real (BRL)" | "Portuguese"
+  country2 | "United States" | "United States Dollar (USD)" | "English"
+  country3 | "Austria" | "Euro (EUR)" | "German"
+end
+
+samples do
+  User | :id | :name | :country | :admin | :last_login
+  user1 | 16 | "Lucas" | country1 | false | {2015, 10, 08}
+  user2 | 327 | "Ingrid" | country3 | true | {2014, 09, 12}
+  user3 | 34 | "Christian" | country2 | false | {2015, 01, 24}
+end
+
+user1
+```
+
+```output
+%User{
+  admin: false,
+  country: %Country{currency: "Real (BRL)", language: "Portuguese", name: "Brazil"},
+  id: 16,
+  last_login: {2015, 10, 8},
+  name: "Lucas"
+}
+```
+
+```elixir
+IO.puts("Name: #{user1.name}, Country: #{user1.country.name}")
+```
+
+```output
+Name: Lucas, Country: Brazil
+```
+
+```output
+:ok
+```
+
+### Assigning variables as maps
+
+<!-- livebook:{"disable_formatting":true} -->
+
+```elixir
+import ExSamples
+
+samples do
+  %{}   | :name       | :country        | :city
+  user1 | "Christian" | "United States" | "New York City"
+  user2 | "Ingrid"    | "Austria"       | "Salzburg"
+end
+
+user1
+```
+
+```output
+%{city: "New York City", country: "United States", name: "Christian"}
+```
+
+### Assigning variables as keyword lists
+
+<!-- livebook:{"disable_formatting":true} -->
+
+```elixir
+samples do
+  []    | :name       | :country        | :city
+  user1 | "Christian" | "United States" | "New York City"
+  user2 | "Ingrid"    | "Austria"       | "Salzburg"
+end
+
+user1
+```
+
+```output
+[name: "Christian", country: "United States", city: "New York City"]
+```
