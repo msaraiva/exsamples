@@ -1,0 +1,29 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  build:
+    strategy:
+      matrix:
+        # https://hexdocs.pm/elixir/compatibility-and-deprecations.html
+        # https://github.com/erlef/setup-beam#compatibility-between-operating-system-and-erlangotp
+        elixir: ["1.13"]
+        otp: ["24", "23", "22"]
+        os: ["ubuntu-20.04"]
+        include:
+          - { elixir: "1.12", otp: "24", os: "ubuntu-20.04" }
+          - { elixir: "1.11", otp: "24", os: "ubuntu-20.04" }
+          - { elixir: "1.10", otp: "23", os: "ubuntu-20.04" }
+          - { elixir: "1.9", otp: "22", os: "ubuntu-20.04" }
+          - { elixir: "1.8", otp: "22", os: "ubuntu-20.04" }
+          - { elixir: "1.7", otp: "22", os: "ubuntu-20.04" }
+          - { elixir: "1.6", otp: "21", os: "ubuntu-20.04" }
+          - { elixir: "1.5", otp: "20", os: "ubuntu-20.04" }
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v2
+    - uses: erlef/setup-beam@v1.9.0
+      with:
+        otp-version: ${{ matrix.otp }}
+        elixir-version: ${{ matrix.elixir }}
+    - run: mix compile --warnings-as-errors
+    - run: mix test

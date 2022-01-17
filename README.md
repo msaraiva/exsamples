@@ -36,6 +36,10 @@ Run `mix deps.get`.
 
 ## Usage
 
+You can see it in action with [livebook](https://livebook.dev/) with [README.livemd](README.livemd)
+
+[![Run in Livebook](https://livebook.dev/badge/v1/blue.svg)](https://livebook.dev/run?url=https%3A%2F%2Fgithub.com%2Fmsaraiva%2Fexsamples%2Fblob%2Fmaster%2FREADME.livemd)
+
 ```Elixir
 import ExSamples
 
