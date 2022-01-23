@@ -111,20 +111,33 @@ defmodule Samples.FormatterPlugin do
       end)
 
     positions = Enum.reverse(positions)
-    {rows, widths} = walk(code, 1, 1, positions, [], {[[]], %{}, 0})
-    last_col_index = map_size(widths) - 1
+    {rows, cols_info} = walk(code, 1, 1, positions, [], {[[]], %{}, 0})
+    last_col_index = map_size(cols_info) - 1
 
     for row <- rows do
       Enum.map_join(row, " | ", fn
         {^last_col_index, value} ->
-          value
+          align_value(value, cols_info[last_col_index], true)
 
         {col_index, value} ->
           offset = if col_index == 0, do: String.duplicate(" ", column_offset), else: ""
-          offset <> String.pad_trailing(value, widths[col_index])
+          offset <> align_value(value, cols_info[col_index], false)
       end)
     end
     |> Enum.join("\n")
+  end
+
+  defp align_value(value, cols_info, last_col?) do
+    cond do
+      cols_info.is_number? ->
+        String.pad_leading(value, cols_info.width)
+
+      last_col? ->
+        value
+
+      true ->
+        String.pad_trailing(value, cols_info.width)
+    end
   end
 
   defp walk("\r\n" <> rest, line, _column, positions, buffer, acc) do
@@ -145,23 +158,35 @@ defmodule Samples.FormatterPlugin do
     walk(rest, line, column + 1, positions, [<<c::utf8>> | buffer], acc)
   end
 
-  defp walk(<<>>, _line, _column, _positions, _buffer, {rows, widths, _col_index}) do
-    {Enum.reverse(rows), widths}
+  defp walk(<<>>, _line, _column, _positions, _buffer, {rows, cols_info, _col_index}) do
+    {Enum.reverse(rows), cols_info}
   end
 
-  defp add_cell({[cells | rows], widths, col_index}, cell) do
+  defp add_cell({[cells | rows], cols_info, col_index}, cell) do
     value = cell |> Enum.reverse() |> to_string() |> String.trim()
     width = String.length(value)
-    widths = Map.update(widths, col_index, width, &max(&1, width))
-    {[[{col_index, value} | cells] | rows], widths, col_index + 1}
+    is_number? = is_number?(value)
+    info = %{width: width, is_number?: is_number?}
+
+    cols_info =
+      Map.update(cols_info, col_index, info, fn info ->
+        %{width: max(info.width, width), is_number?: info.is_number? or is_number?}
+      end)
+
+    {[[{col_index, value} | cells] | rows], cols_info, col_index + 1}
   end
 
-  defp new_line({[cells | rows], widths, _col_index}, []) do
-    {[Enum.reverse(cells) | rows], widths, 0}
+  defp is_number?(value) do
+    value = String.replace(value, "_", "")
+    match?({_, ""}, Float.parse(value)) or match?({_, ""}, Integer.parse(value))
   end
 
-  defp new_line({[cells | rows], widths, _col_index}, _positions) do
-    {[[] | [Enum.reverse(cells) | rows]], widths, 0}
+  defp new_line({[cells | rows], cols_info, _col_index}, []) do
+    {[Enum.reverse(cells) | rows], cols_info, 0}
+  end
+
+  defp new_line({[cells | rows], cols_info, _col_index}, _positions) do
+    {[[] | [Enum.reverse(cells) | rows]], cols_info, 0}
   end
 
   defp get_code_by_range(code, range) do

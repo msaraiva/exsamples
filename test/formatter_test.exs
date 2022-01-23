@@ -94,4 +94,24 @@ defmodule Samples.FormatterPluginTest do
            end
            """
   end
+
+  test "align columns with numbers to the right" do
+    code = """
+    samples do
+      :id | :name | :currency | :language | :population | :inflation
+      1 | "Brazil" | "Real (BRL)" | "Portuguese" | 204451000 | 7.70
+      3 | "Austria" | "Euro (EUR)" | "German" | 8623073 | 2.45
+      1234 | "Sweden" | "Swedish krona (SEK)" | "Swedish" | 9801616 | 3.60
+    end
+    """
+
+    assert Samples.FormatterPlugin.format(code, []) == """
+           samples do
+              :id | :name     | :currency             | :language    | :population | :inflation
+                1 | "Brazil"  | "Real (BRL)"          | "Portuguese" | 204_451_000 |       7.70
+                3 | "Austria" | "Euro (EUR)"          | "German"     |   8_623_073 |       2.45
+             1234 | "Sweden"  | "Swedish krona (SEK)" | "Swedish"    |   9_801_616 |       3.60
+           end
+           """
+  end
 end

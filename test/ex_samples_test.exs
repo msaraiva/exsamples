@@ -147,7 +147,7 @@ defmodule ExSamplesTest do
   test "with diferent types" do
     samples do
       %{}   | :string       | :integer | :float | :atom | :boolean
-      types | "some string" | 42       | 14.33  | :foo  | true
+      types | "some string" |       42 |  14.33 | :foo  | true
     end
 
     assert types.string == "some string"
