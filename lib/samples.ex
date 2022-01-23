@@ -1,5 +1,4 @@
 defmodule Samples do
-
   def extract(contents, type) do
     contents
     |> extract_table_parts
@@ -33,8 +32,8 @@ defmodule Samples do
   end
 
   defp slice_table(table) do
-    [header|rows]         = extract_header_rows(table)
-    {type, fields}        = extract_type_and_fields(header)
+    [header | rows] = extract_header_rows(table)
+    {type, fields} = extract_type_and_fields(header)
     {vars, fields_values} = extract_vars_and_fields_values(type, rows)
 
     {vars, type, fields, fields_values}
@@ -45,6 +44,7 @@ defmodule Samples do
     |> Enum.zip(keyword_lists)
     |> Enum.map(fn {var_name, value} ->
       var = Macro.var(var_name, nil)
+
       quote do
         unquote(var) = unquote(replace_value(type, value))
       end
@@ -56,15 +56,15 @@ defmodule Samples do
   end
 
   defp to_typed_list(contents, type) do
-    Enum.map contents, fn item ->
+    Enum.map(contents, fn item ->
       replace_value(type, item)
-    end
+    end)
   end
 
   defp extract_header_rows([]), do: [[nil]]
   defp extract_header_rows(table), do: table
 
-  def extract_type_and_fields([type = {atom, _, []}|fields]) when atom == :%{} do
+  def extract_type_and_fields([type = {atom, _, []} | fields]) when atom == :%{} do
     {type, fields}
   end
 
@@ -72,15 +72,15 @@ defmodule Samples do
     {type, fields}
   end
 
-  def extract_type_and_fields(fields = [{field, [_], _}|_]) when is_atom(field) do
+  def extract_type_and_fields(fields = [{field, [_], _} | _]) when is_atom(field) do
     {nil, Enum.map(fields, fn {field, [_], _} -> field end)}
   end
 
-  def extract_type_and_fields(fields = [field|_]) when is_atom(field) do
+  def extract_type_and_fields(fields = [field | _]) when is_atom(field) do
     {nil, fields}
   end
 
-  def extract_type_and_fields([type|fields]) do
+  def extract_type_and_fields([type | fields]) do
     {type, fields}
   end
 
@@ -90,14 +90,14 @@ defmodule Samples do
 
   def extract_vars_and_fields_values(_type, rows) do
     rows
-    |> Enum.map(fn [{var,[line: _line],_}|fields_values] -> {var, fields_values} end)
-    |> :lists.unzip
+    |> Enum.map(fn [{var, [line: _line], _} | fields_values] -> {var, fields_values} end)
+    |> :lists.unzip()
   end
 
   defp zip_fields_and_values(fields, rows) do
-    Enum.map rows, fn row ->
+    Enum.map(rows, fn row ->
       Enum.zip(fields, row)
-    end
+    end)
   end
 
   # As structs by module name
@@ -127,8 +127,8 @@ defmodule Samples do
   defp contents_to_table(contents) do
     case contents do
       [do: nil] -> []
-      nil       -> []
-      _         -> extract_rows(contents)
+      nil -> []
+      _ -> extract_rows(contents)
     end
   end
 
@@ -141,22 +141,21 @@ defmodule Samples do
   end
 
   defp extract_row(row) do
-    row |> extract_cells([]) |> Enum.reverse
+    row |> extract_cells([]) |> Enum.reverse()
   end
 
   defp extract_cells({:|, _, [lhs, rhs]}, values) do
-    rhs |> extract_cells([lhs|values])
+    rhs |> extract_cells([lhs | values])
   end
 
   defp extract_cells(value, values) do
-    [value|values]
+    [value | values]
   end
 
   defp normalize_contents(contents) do
     case contents do
       [do: {:__block__, _, code}] -> code
-      [do: code]                  -> [code]
+      [do: code] -> [code]
     end
   end
-
 end
