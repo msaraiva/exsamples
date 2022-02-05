@@ -1,9 +1,9 @@
 defmodule ExSamples do
   defmacro samples([as: type], contents) do
-    contents |> Samples.extract(type)
+    Samples.extract(contents, type)
   end
 
   defmacro samples(contents) do
-    contents |> Samples.extract()
+    Samples.extract(contents)
   end
 end

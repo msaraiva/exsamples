@@ -4,27 +4,58 @@ Initializes lists of maps, structs or keyword lists using tabular data in Elixir
 
 ExSamples helps you to describe data of the same type in a more **compact** and **readable** way. Specially useful when defining sample data (e.g. for tests). Here is an example:
 
-```Elixir
-countries = samples do
-  :id | :name           | :currency                    | :language    | :population
-   1  | "Brazil"        | "Real (BRL)"                 | "Portuguese" | 204_451_000
-   2  | "United States" | "United States Dollar (USD)" | "English"    | 321_605_012
-   3  | "Austria"       | "Euro (EUR)"                 | "German"     |   8_623_073
-   4  | "Sweden"        | "Swedish krona (SEK)"        | "Swedish"    |   9_801_616
-end
-
+```elixir
+countries =
+  samples do
+    :id | :name           | :currency                    | :language    | :population
+     1  | "Brazil"        | "Real (BRL)"                 | "Portuguese" | 204_451_000
+     2  | "United States" | "United States Dollar (USD)" | "English"    | 321_605_012
+     3  | "Austria"       | "Euro (EUR)"                 | "German"     |   8_623_073
+     4  | "Sweden"        | "Swedish krona (SEK)"        | "Swedish"    |   9_801_616
+  end
 ```
 
+```elixir
+iex> IO.inspect(countries)
+[
+  %{
+    currency: "Real (BRL)",
+    id: 1,
+    language: "Portuguese",
+    name: "Brazil",
+    population: 204451000
+  },
+  %{
+    currency: "United States Dollar (USD)",
+    id: 2,
+    language: "English",
+    name: "United States",
+    population: 321605012
+  },
+  %{
+    currency: "Euro (EUR)",
+    id: 3,
+    language: "German",
+    name: "Austria",
+    population: 8623073
+  },
+  %{
+    currency: "Swedish krona (SEK)",
+    id: 4,
+    language: "Swedish",
+    name: "Sweden",
+    population: 9801616
+  }
+]
 ```
-iex> countries |> Enum.at(1)
-%{currency: "United States Dollar (USD)", id: 2, language: "English",
-  name: "United States", population: 321605012}
-```
-> Disclaimer: This is a very experimental library. The main goal of this first version is to define the table format(s) and minimum functionality.
 
-## Install
+You can see it in action with [livebook](https://livebook.dev/) with [README.livemd](README.livemd).
 
-Add ExSamples as a dependency in your `mix.exs` file.
+[![Run in Livebook](https://livebook.dev/badge/v1/blue.svg)](https://livebook.dev/run?url=https%3A%2F%2Fgithub.com%2Fmsaraiva%2Fexsamples%2Fblob%2Fmaster%2Fusage.livemd)
+
+## Installation
+
+Add `:exsamples` as a dependency in your `mix.exs` file.
 
 ```elixir
 def deps do
@@ -32,66 +63,67 @@ def deps do
 end
 ```
 
-Run `mix deps.get`.
+## Configure the formatter (only for Elixir >= `v1.13.2`)
+
+Add `Samples.FormatterPlugin` to the list of plugins in your `.formatter.exs`:
+
+```elixir
+[
+  plugins: [Samples.FormatterPlugin],
+  ...
+]
+
+```
+
+If you don't configure the formatter, `mix format` will remove all extra spaces you add
+to make your tables look nice.
 
 ## Usage
 
-You can see it in action with [livebook](https://livebook.dev/) with [README.livemd](README.livemd)
-
-[![Run in Livebook](https://livebook.dev/badge/v1/blue.svg)](https://livebook.dev/run?url=https%3A%2F%2Fgithub.com%2Fmsaraiva%2Fexsamples%2Fblob%2Fmaster%2FREADME.livemd)
-
-```Elixir
+```elixir
 import ExSamples
 
-users = samples do
+samples do
   :name       | :country        | :city           | :admin
   "Christian" | "United States" | "New York City" | false
   "Peter"     | "Germany"       | "Berlin"        | true
   "José"      | "Brazil"        | "São Paulo"     | false
   "Ingrid"    | "Austria"       | "Salzburg"      | false
-  "Lucas"     | "Brazil"        | "Fortaleza"     | true      
+  "Lucas"     | "Brazil"        | "Fortaleza"     | true
 end
-
-for %{name: name, country: country, city: city} <- users, country == "Brazil" do
-  {name, city}
-end
-
-# [{"José", "São Paulo"}, {"Lucas", "Fortaleza"}]
 ```
-
-As you can see, after macro expansion you get a regular list. You can use `for` comprehensions for mapping and filtering your data just like with any other Enumerable.
 
 By default `samples` initializes a list of maps. But you can also define structs and keyword lists.
 
 ### Initializing structs
 
-```Elixir
+```elixir
 import ExSamples
 
 defmodule Country do
   defstruct [:id, :name, :currency, :language, :population]
 end
 
-countries = samples as: Country do
+samples as: Country do
   :id | :name           | :currency                    | :language    | :population
    1  | "Brazil"        | "Real (BRL)"                 | "Portuguese" | 204_451_000
-   2  | "United States" | "United States Dollar (USD)" | "English"    | 321_605_012    
+   2  | "United States" | "United States Dollar (USD)" | "English"    | 321_605_012
 end
 ```
 
 ### Initializing keyword lists
 
-```Elixir
-countries = samples as: [] do
+```elixir
+samples as: [] do
   :id | :name           | :currency             | :language    | :population
-   3  | "Austria"       | "Euro (EUR)"          | "German"     |   8_623_073        
+   3  | "Austria"       | "Euro (EUR)"          | "German"     |   8_623_073
    4  | "Sweden"        | "Swedish krona (SEK)" | "Swedish"    |   9_801_616
 end
 ```
 
 ### Assigning variables as structs
 
-```Elixir
+```elixir
 
 defmodule Country do
   defstruct [:name, :currency, :language]
@@ -124,7 +156,7 @@ Name: Lucas, Country: Brazil
 
 ### Assigning variables as maps
 
-```Elixir
+```elixir
 samples do
    %{}  | :name       | :country        | :city
   user1 | "Christian" | "United States" | "New York City"
@@ -134,7 +166,7 @@ end
 
 ### Assigning variables as keyword lists
 
-```Elixir
+```elixir
 samples do
     []  | :name       | :country        | :city
   user1 | "Christian" | "United States" | "New York City"
@@ -143,23 +175,10 @@ end
 
 ```
 
-## Other examples (WIP)
-
-```Elixir
-  truth_table = samples do
-     :a   |  :b   | :and  |  :or  | :xor
-    true  | true  | true  | true  | false
-    true  | false | false | true  | true
-    false | true  | false | true  | true
-    false | false | false | false | false
-  end
-
-```
-
 ##License
 (The MIT License)
 
-Copyright (c) 2015 Marlus Saraiva
+Copyright (c) 2022 Marlus Saraiva
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
