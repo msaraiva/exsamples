@@ -49,9 +49,9 @@ iex> IO.inspect(countries)
 ]
 ```
 
-You can see it in action with [livebook](https://livebook.dev/) with [README.livemd](README.livemd).
+You can see it in action with [livebook](https://livebook.dev/) with [guides/usage.livemd](guides/usage.livemd).
 
-[![Run in Livebook](https://livebook.dev/badge/v1/blue.svg)](https://livebook.dev/run?url=https%3A%2F%2Fgithub.com%2Fmsaraiva%2Fexsamples%2Fblob%2Fmaster%2Fusage.livemd)
+[![Run in Livebook](https://livebook.dev/badge/v1/blue.svg)](https://livebook.dev/run?url=https%3A%2F%2Fgithub.com%2Fmsaraiva%2Fexsamples%2Fblob%2Fmaster%2Fguides%2Fusage.livemd)
 
 ## Installation
 
