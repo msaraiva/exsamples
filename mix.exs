@@ -5,7 +5,7 @@ defmodule ExSamples.Mixfile do
     [
       app: :exsamples,
       version: "0.1.0",
-      elixir: "~> 1.5",
+      elixir: "~> 1.10",
       description: description(),
       package: package(),
       deps: deps()
