@@ -9,10 +9,6 @@ jobs:
         elixir: ["1.13"]
         otp: ["24", "23", "22"]
         os: ["ubuntu-20.04"]
-        include:
-          - { elixir: "1.12", otp: "24", os: "ubuntu-20.04" }
-          - { elixir: "1.11", otp: "24", os: "ubuntu-20.04" }
-          - { elixir: "1.10", otp: "23", os: "ubuntu-20.04" }
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v2
