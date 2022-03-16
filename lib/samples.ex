@@ -80,6 +80,10 @@ defmodule Samples do
     {nil, fields}
   end
 
+  def extract_type_and_fields(fields = [field | _]) when is_binary(field) do
+    {nil, fields}
+  end
+
   def extract_type_and_fields([type | fields]) do
     {type, fields}
   end

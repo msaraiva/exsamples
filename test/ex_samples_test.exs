@@ -48,6 +48,20 @@ defmodule ExSamplesTest do
            ]
   end
 
+  test "initializing list of keyword lists with string keys" do
+    users =
+      samples as: [] do
+        "name"      | "country"       | "city"
+        "Christian" | "United States" | "New York City"
+        "Peter"     | "Austria"       | "Vienna"
+      end
+
+    assert users == [
+             [{"name", "Christian"}, {"country", "United States"}, {"city", "New York City"}],
+             [{"name", "Peter"}, {"country", "Austria"}, {"city", "Vienna"}]
+           ]
+  end
+
   test "initializing variables in the first column as maps" do
     samples do
       %{}   | :name       | :country        | :city
@@ -57,6 +71,22 @@ defmodule ExSamplesTest do
 
     assert user1 == %{name: "Christian", country: "United States", city: "New York City"}
     assert user2 == %{name: "Peter", country: "Austria", city: "Vienna"}
+  end
+
+  test "initializing variables in the first column as maps with string keys" do
+    samples do
+      %{}   | "name"      | "country"       | "city"
+      user1 | "Christian" | "United States" | "New York City"
+      user2 | "Peter"     | "Austria"       | "Vienna"
+    end
+
+    assert user1 == %{
+             "name" => "Christian",
+             "country" => "United States",
+             "city" => "New York City"
+           }
+
+    assert user2 == %{"name" => "Peter", "country" => "Austria", "city" => "Vienna"}
   end
 
   test "initializing variables in the first column as structs" do
@@ -107,6 +137,18 @@ defmodule ExSamplesTest do
       end
 
     assert users == []
+  end
+
+  test "with keys as string" do
+    users =
+      samples do
+        "name"      | "country"       | "city"
+        "Christian" | "United States" | "New York City"
+      end
+
+    assert users == [
+             %{"name" => "Christian", "country" => "United States", "city" => "New York City"}
+           ]
   end
 
   test "with variables as values" do
