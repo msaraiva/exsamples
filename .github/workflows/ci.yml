@@ -6,9 +6,16 @@ jobs:
       matrix:
         # https://hexdocs.pm/elixir/compatibility-and-deprecations.html
         # https://github.com/erlef/setup-beam#compatibility-between-operating-system-and-erlangotp
-        elixir: ["1.13"]
-        otp: ["24", "23", "22"]
+        elixir: ["1.13.2", "1.14"]
+        otp: ["25", "24", "23", "22"]
         os: ["ubuntu-20.04"]
+        exclude:
+          - otp: 22
+            elixir: 1.14
+          # Erlang 25 is only compatible with Elixir >= 1.13.4
+          - otp: 25
+            elixir: 1.13.2
+
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v2
